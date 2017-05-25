@@ -8,6 +8,8 @@ node {
        stage('Checkout'){
 
           checkout scm
+          print "Checking out ${env.BRANCH_NAME}"
+          print "Git_Branch = ${env.GIT_BRANCH}"
        }
 
        stage('Test'){
@@ -26,7 +28,7 @@ node {
 
        stage('Build Docker'){
          sh 'echo This is Build Docker'
-
+         sh 'env'
             // sh './dockerBuild.sh'
        }
 
