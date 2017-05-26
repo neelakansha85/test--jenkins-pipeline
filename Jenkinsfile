@@ -2,19 +2,21 @@
 
 node {
     currentBuild.result = "SUCCESS"
+    boolean continuePipeline = true
 
     try {
 
        stage('Check Preconditions'){
 
-       if (${env.BRANCH_NAME} != 'master') {
-         currentBuild.result = 'ABORTED'
-         print "Branch detected ${env.BRANCH_NAME}"
-         error('Skipping build as there are no changes detected to master branch')
-       }
+           if ( env.BRANCH_NAME != 'master') {
+             print "Branch detected ${env.BRANCH_NAME}"
+             continuePipeline = false
+             currentBuild.result = 'ABORTED'
+           }
           
        }
-
+       
+       if (continuePipeline) {
        stage('Checkout'){
 
           checkout scm
@@ -62,8 +64,7 @@ node {
                      subject: 'project build successful',
                      to: 'neel@nsdesigners.com'
        }
-
-
+       }
 
     }
     catch (err) {
