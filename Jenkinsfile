@@ -2,21 +2,22 @@
 
 node {
     currentBuild.result = "SUCCESS"
-    boolean continuePipeline = true
+
+    try {
+       stage('Check Preconditions'){
+           if ( env.BRANCH_NAME != 'master') {
+             print "Branch detected ${env.BRANCH_NAME}"
+             error("Skipping this build") 
+           }          
+       }
+    }
+    catch(err) {
+        currentBuild.result = 'ABORTED'
+        throw err
+    }
 
     try {
 
-       stage('Check Preconditions'){
-
-           if ( env.BRANCH_NAME != 'master') {
-             print "Branch detected ${env.BRANCH_NAME}"
-             continuePipeline = false
-             currentBuild.result = 'ABORTED'
-           }
-          
-       }
-       
-       if (continuePipeline) {
        stage('Checkout'){
 
           checkout scm
@@ -63,7 +64,6 @@ node {
                      replyTo: 'jenkins@nsdesigners.com',
                      subject: 'project build successful',
                      to: 'neel@nsdesigners.com'
-       }
        }
 
     }
