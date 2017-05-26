@@ -5,11 +5,19 @@ node {
 
     try {
 
+       stage('Check Preconditions'){
+
+       if (${env.BRANCH_NAME} != 'master') {
+         currentBuild.result = 'ABORTED'
+         print "Branch detected ${env.BRANCH_NAME}"
+         error('Skipping build as there are no changes detected to master branch')
+       }
+          
+       }
+
        stage('Checkout'){
 
           checkout scm
-          print "Checking out ${env.BRANCH_NAME}"
-          print "Git_Branch = ${env.GIT_BRANCH}"
        }
 
        stage('Test'){
